@@ -1,0 +1,16 @@
+{
+  "users": [
+    {
+      "id": "7I3aEMMAm3YWzMDDpPE39ypb0Bl1",
+      "username": "test",
+      "email": "test@test.com",
+      "cart": [
+        {
+          "id": "2633",
+          "productId": 5,
+          "quantity": 1
+        }
+      ]
+    }
+  ]
+}
