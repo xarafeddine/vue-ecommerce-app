@@ -1,23 +1,47 @@
 <template>
-  <div class="signup-container">
-    <form class="signup-form" @submit.prevent="handleSubmit">
-      <label for="username">Username</label>
-      <input type="text" id="username" v-model="username" required />
+  <form class="signup-form" @submit.prevent="handleSubmit">
+    <h1>Signup</h1>
 
-      <label for="email">Email</label>
-      <input type="email" id="email" v-model="email" required />
+    <input-component
+      inputType="text"
+      inputName="username"
+      @on-change="onchange"
+      :isRequired="true"
+      inputLabel="Username"
+      inputId="username"
+      placehoder="enter a username"
+    />
 
-      <label for="password">Password</label>
-      <input type="password" id="password" v-model="password" required />
+    <input-component
+      inputType="email"
+      inputName="email"
+      @on-change="onchange"
+      :isRequired="true"
+      inputLabel="Email"
+      inputId="email"
+      placehoder="enter an email"
+    />
 
-      <button>Sign Up</button>
-    </form>
-    <div v-if="error">{{ error }}</div>
-  </div>
+    <input-component
+      inputType="password"
+      inputName="password"
+      @on-change="onchange"
+      :isRequired="true"
+      inputLabel="Password"
+      inputId="password"
+      placehoder="enter a password"
+    />
+
+    <button-component>Sign Up</button-component>
+    <div v-if="error" class="error">{{ error }}</div>
+  </form>
 </template>
 
 <script>
+import ButtonComponent from "@/components/ButtonComponent.vue";
+import InputComponent from "@/components/InputComponent.vue";
 export default {
+  components: { ButtonComponent, InputComponent },
   data() {
     return {
       username: "",
@@ -27,16 +51,19 @@ export default {
     };
   },
   methods: {
+    onchange({ key, value }) {
+      this[key] = value;
+    },
     async handleSubmit() {
-      try {
-        await this.$store.dispatch("signup", {
-          username: this.username,
-          email: this.email,
-          password: this.password,
-        });
+      await this.$store.dispatch("signup", {
+        username: this.username,
+        email: this.email,
+        password: this.password,
+      });
+      if (this.$store.getters.error)
+        return (this.error = this.$store.getters.error.message.slice(10));
+      else {
         this.$router.push("/");
-      } catch (err) {
-        this.error = err.message;
       }
     },
   },
@@ -44,38 +71,21 @@ export default {
 </script>
 
 <style scoped>
-.signup-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
 .signup-form {
+  padding: 50px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  justify-content: center;
 }
 
-.signup-form label {
-  margin-top: 1rem;
+.signup-form h1 {
+  text-align: center;
+  font-size: 30px;
+  margin-bottom: 30px;
 }
 
-.signup-form input {
-  margin-bottom: 1rem;
-  padding: 0.5rem;
-  border-radius: 0.25rem;
-  border: none;
-  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
-}
-
-.signup-form button {
-  margin-top: 1rem;
-  padding: 0.5rem;
-  border-radius: 0.25rem;
-  border: none;
-  background-color: #007bff;
-  color: #fff;
-  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
-  cursor: pointer;
+.error {
+  margin: 10px;
+  color: red;
 }
 </style>

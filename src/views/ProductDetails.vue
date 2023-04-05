@@ -17,17 +17,31 @@
         <strong>Description:</strong>
         <p>{{ product.description }}</p>
 
-        <button
+        <button-component
           v-if="product.isInCart"
-          @click="$router.push({ name: 'cart' })"
-          class="cartBtn"
+          @on-click="$router.push({ name: 'cart' })"
         >
           go to cart
-        </button>
+        </button-component>
 
-        <button v-else @click="addToCart" class="cartBtn">Add to cart</button>
+        <button-component v-else @on-click="addToCart"
+          >Add to cart</button-component
+        >
       </div>
     </div>
+    <modal-component v-if="showModal" @closeModal="showModal = false">
+      <ul class="selector">
+        <li :class="hasAccount && 'active'" @click="hasAccount = true">
+          Login
+        </li>
+        <li :class="!hasAccount && 'active'" @click="hasAccount = false">
+          Signup
+        </li>
+      </ul>
+
+      <log-in v-if="hasAccount" />
+      <sign-up v-else />
+    </modal-component>
     <div class="reviews">
       <h3>Customer Reviews</h3>
       <ul v-if="product.reviews?.length">
@@ -45,19 +59,29 @@
 </template>
 
 <script>
+import ButtonComponent from "@/components/ButtonComponent.vue";
 import { mapState } from "vuex";
+import ModalComponent from "@/components/ModalComponent.vue";
+import LogIn from "./LogIn.vue";
+import SignUp from "./SignUp.vue";
 
 export default {
+  components: { ButtonComponent, ModalComponent, LogIn, SignUp },
   props: ["id"],
   data() {
     return {
       selectedIndex: 0,
+      showModal: false,
+      hasAccount: true,
     };
   },
 
   methods: {
+    select(bool) {
+      this.hasAccount = bool;
+    },
     addToCart() {
-      if (!this.userIsAuthenticated) return alert("Signup to purshase");
+      if (!this.userIsAuthenticated) return (this.showModal = true);
       const cart = [...this.$store.state.user.cart];
       cart.push({
         id: Math.round(Math.random() * 10000).toString(),
@@ -67,6 +91,9 @@ export default {
       this.product.isInCart = true;
       this.$store.dispatch("updateCart", cart);
     },
+    // showModal() {
+    //   return !this.userIsAuthenticated;
+    // },
     addOne() {
       this.selectedIndex = (this.selectedIndex + 1) % 3;
     },
@@ -165,5 +192,31 @@ export default {
   font-size: 1rem;
   border: none;
   cursor: pointer;
+}
+
+.selector {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  list-style: none;
+  width: 100%;
+}
+
+.selector li {
+  text-decoration: none;
+  text-decoration-style: none;
+  background-color: #cecccc;
+  height: 80px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9e9e9e;
+  cursor: pointer;
+}
+
+.selector .active {
+  background-color: rgb(255, 255, 255);
+  color: black;
 }
 </style>

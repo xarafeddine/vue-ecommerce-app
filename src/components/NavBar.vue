@@ -3,7 +3,7 @@
     <p data-item="Store">Store</p>
 
     <section>
-      <div>facke products examples, store:</div>
+      
       <nav>
         <ul class="menuItems">
           <li>
@@ -103,7 +103,7 @@ p:hover::before {
 nav {
   margin: 25px;
   background: #f9f9f9;
-  padding: 16px;
+  padding: 0px;
 }
 nav .menuItems {
   list-style: none;

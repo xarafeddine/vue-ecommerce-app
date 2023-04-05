@@ -79,6 +79,7 @@ export default new Vuex.Store({
 
     async signup({ commit }, { email, password, username }) {
       commit("setLoading", true);
+      commit("setError", null);
 
       try {
         const response = await createUserWithEmailAndPassword(
@@ -95,18 +96,25 @@ export default new Vuex.Store({
           cart: [],
         };
 
-        UserService.addUser(newUser).then((res) => {
-          commit("setUser", res.data);
-          // console.log("usercreated", res.data);
-        });
+        UserService.addUser(newUser)
+          .then((res) => {
+            commit("setUser", res.data);
+            commit("setError", null);
+          })
+          .catch(() => {
+            commit("setError", { message: "user not registred in database" });
+            console.log("user not registred in database");
+          });
       } catch (error) {
         commit("setLoading", false);
         commit("setError", error);
+        console.log(error.message);
       }
     },
 
     async login({ commit }, { email, password }) {
       commit("setLoading", true);
+      commit("setError", null);
 
       try {
         const { user } = await signInWithEmailAndPassword(
@@ -122,10 +130,11 @@ export default new Vuex.Store({
         // console.log("user logdin", data);
 
         commit("setUser", data);
+        commit("setError", null);
       } catch (error) {
         commit("setLoading", false);
         commit("setError", error);
-        console.log(error);
+        console.log(error.message);
       }
     },
 
@@ -157,7 +166,7 @@ export default new Vuex.Store({
 
 function updateProducts(state) {
   const isInCart = (prodId) => {
-    const item = state.user.cart.find((item) => item.productId == prodId);
+    const item = state.user?.cart.find((item) => item.productId == prodId);
     if (item) return true;
     return false;
   };

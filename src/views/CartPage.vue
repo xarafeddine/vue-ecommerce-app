@@ -21,12 +21,14 @@
             </p>
           </div>
           <div>
-            <button @click="removeItem(item.id)">Remove</button>
+            <button class="removeBtn" @click="removeItem(item.id)">
+              Remove
+            </button>
           </div>
         </li>
       </ul>
       <div>
-        <button @click="checkout()">Checkout</button>
+        <button-component @on-click="checkout()">Checkout</button-component>
       </div>
     </div>
     <div v-else>
@@ -36,7 +38,9 @@
 </template>
 
 <script>
+import ButtonComponent from "@/components/ButtonComponent.vue";
 export default {
+  components: { ButtonComponent },
   data() {
     return {};
   },
@@ -106,7 +110,7 @@ export default {
   justify-content: space-between;
 }
 
-.Cart button {
+.removeBtn {
   display: inline-block;
   padding: 10px 20px;
   background: #ddd;

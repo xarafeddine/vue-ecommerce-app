@@ -1,36 +1,38 @@
 <template>
-  <form @submit.prevent="handleSubmit" class="mt-4 flex flex-col">
-    <h3 class="text-xl underline">Login</h3>
+  <form @submit.prevent="handleSubmit" class="loginForm">
+    <h3 class="title">Login</h3>
 
-    <label for="email">Email:</label>
-    <input
-      class="border w-4/12"
-      type="email"
-      name="email"
-      v-model="email"
-      required
+    <input-component
+      inputType="email"
+      inputName="email"
+      @on-change="onchange"
+      :isRequired="true"
+      inputLabel="Email"
+      inputId="email"
+      placehoder="enter your email"
     />
 
-    <label for="email">Password:</label>
-    <input
-      class="border w-4/12"
-      type="password"
-      name="password"
-      v-model="password"
-      required
+    <input-component
+      inputType="password"
+      inputName="password"
+      @on-change="onchange"
+      :isRequired="true"
+      inputLabel="Password"
+      inputId="password"
+      placehoder="enter your password"
     />
 
-    <button
-      class="w-max mt-4 px-4 py-2 text-center rounded-full bg-blue-500 text-white"
-    >
-      Login
-    </button>
-    <div v-if="error">{{ error }}</div>
+    <button-component> Login </button-component>
+    <div v-if="error" class="error">{{ error }}</div>
   </form>
 </template>
 
 <script>
+import InputComponent from "@/components/InputComponent.vue";
+import ButtonComponent from "@/components/ButtonComponent.vue";
+
 export default {
+  components: { InputComponent, ButtonComponent },
   data() {
     return {
       email: "",
@@ -39,17 +41,38 @@ export default {
     };
   },
   methods: {
+    onchange({ key, value }) {
+      this[key] = value;
+    },
     async handleSubmit() {
-      try {
-        await this.$store.dispatch("login", {
-          email: this.email,
-          password: this.password,
-        });
+      await this.$store.dispatch("login", {
+        email: this.email,
+        password: this.password,
+      });
+      if (this.$store.getters.error)
+        return (this.error = this.$store.getters.error.message.slice(10));
+      else {
         this.$router.push("/");
-      } catch (err) {
-        this.error = err.message;
       }
     },
   },
 };
 </script>
+<style scoped>
+.loginForm {
+  padding: 50px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.title {
+  text-align: center;
+  font-size: 30px;
+  margin-bottom: 30px;
+}
+.error {
+  margin: 10px;
+  color: red;
+}
+</style>
