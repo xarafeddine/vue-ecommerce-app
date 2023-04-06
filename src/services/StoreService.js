@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const apiClient = axios.create({
-  baseURL: "https://fakestoreapi.com",
+  baseURL: "https://unusual-blue-gaiters.cyclic.app",
+  // baseURL: "http://localhost:8000",
   withCredentials: false,
   headers: {
     Accept: "application/json",
@@ -16,10 +17,10 @@ export default {
   getProduct(id) {
     return apiClient.get(`/products/${id}`);
   },
-  getCategories() {
-    return apiClient.get("/products/categories");
+  updateProduct(id, product) {
+    return apiClient.put(`/products/${id}`, product);
   },
-  getCategory(id) {
-    return apiClient.get(`/carts/${id}`);
+  getCategories() {
+    return apiClient.get("/categories");
   },
 };

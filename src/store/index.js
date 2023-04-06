@@ -42,6 +42,31 @@ export default new Vuex.Store({
     },
   },
   actions: {
+    async createReview({ commit, state, dispatch }, payload) {
+      if (state.user === null) return;
+      commit("setError", null);
+
+      const { productId, comment, rating } = payload;
+      const prod = state.products.find((prod) => prod.id === productId);
+
+      const updatedProduct = { ...prod };
+
+      const id = Date.now();
+      const review = { id, comment, rating, author: state.user.username };
+      updatedProduct.reviews = prod.reviews
+        ? [...prod.reviews, review]
+        : [review];
+
+      StoreService.updateProduct(productId, updatedProduct)
+        .then((res) => {
+          dispatch("fetchProducts");
+          console.log("prod updated", res.data);
+        })
+        .catch((err) => {
+          commit("setError", err);
+        });
+    },
+
     async autoSignIn({ commit, getters }, payload) {
       const { data } = await UserService.getUser(payload.uid);
       commit("setUser", data);
@@ -87,6 +112,7 @@ export default new Vuex.Store({
           email,
           password
         );
+        commit("setError", null);
 
         commit("setLoading", false);
         const newUser = {

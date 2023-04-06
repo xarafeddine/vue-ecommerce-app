@@ -70,7 +70,7 @@ export default {
 
     filteredProducts() {
       let filtered = this.products;
-      
+
       if (this.selectedCategory !== "")
         filtered = filtered.filter(
           (product) => product.category === this.selectedCategory
@@ -140,6 +140,12 @@ export default {
   padding: 50px 0;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
+}
+
+@media screen and (max-width: 1000px) {
+  .product-list {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 @media screen and (max-width: 650px) {

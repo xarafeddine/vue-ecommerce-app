@@ -12,18 +12,15 @@
     <p>Category: {{ product.category }}</p>
     <strong style="color: green">${{ product.price }}</strong>
     <div class="rating">
-      <span
-        v-for="star in parseInt(product.rating.rate)"
-        :key="star"
-        class="star"
-        >&#9733;</span
-      >
+      <star-component :stars="parseInt(product.rating.rate)" />
     </div>
   </div>
 </template>
 
 <script>
+import StarComponent from "./StarComponent.vue";
 export default {
+  components: { StarComponent },
   props: {
     product: {
       type: Object,
@@ -63,11 +60,5 @@ export default {
 
 .rating {
   margin: 10px 0;
-}
-
-.star {
-  color: #ffc107;
-  font-size: 20px;
-  margin-right: 5px;
 }
 </style>

@@ -1,9 +1,7 @@
 <template>
   <div>
     <p data-item="Store">Store</p>
-
     <section>
-      
       <nav>
         <ul class="menuItems">
           <li>

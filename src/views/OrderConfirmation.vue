@@ -5,9 +5,7 @@
       <h2>Order Summary</h2>
       <div class="summary-row">
         <span class="summary-label">Order ID:</span>
-        <span class="summary-value">{{
-          Math.floor(Math.random() * 1234)
-        }}</span>
+        <span class="summary-value">{{ Date.new() }}</span>
       </div>
       <div class="summary-row">
         <span class="summary-label">Order info:</span>

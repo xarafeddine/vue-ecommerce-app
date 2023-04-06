@@ -2,14 +2,15 @@
   <div class="ProductDetails" v-if="product">
     <h1>{{ product.title }}</h1>
     <div class="product">
-      <div class="right">
+      <div class="left">
         <img :src="selectedImage" :alt="product.title" />
       </div>
-      <div class="left">
+      <div class="right">
         <strong>Category:</strong>
         <p>{{ product.category }}</p>
 
-        <strong>Rating: {{ Math.round(Math.random() * 5) }}</strong>
+        <strong>Rating: </strong>
+        <star-component :stars="parseInt(product.rating.rate)" />
 
         <strong>Price:</strong>
         <p>${{ product.price }}</p>
@@ -43,14 +44,26 @@
       <sign-up v-else />
     </modal-component>
     <div class="reviews">
-      <h3>Customer Reviews</h3>
-      <ul v-if="product.reviews?.length">
-        <li v-for="review in product.reviews" :key="review.id">
-          <strong>{{ review.author }}</strong> - {{ review.rating }} stars
-          <p>{{ review.comment }}</p>
-        </li>
-      </ul>
-      <p v-else>no reviews are available :(</p>
+      <div class="review-list">
+        <h2 class="title">Customer Reviews</h2>
+        <ul v-if="product.reviews?.length">
+          <li v-for="review in product.reviews" :key="review.id">
+            by <strong>{{ review.author }}</strong> - {{ review.rating }} stars
+            <p>
+              <i>{{ review.comment }}</i>
+            </p>
+          </li>
+        </ul>
+        <p v-else>no reviews are available :(</p>
+      </div>
+
+      <div class="review-form">
+        <h2 class="title">Make your own review</h2>
+        <reviews-form
+          v-if="userIsAuthenticated"
+          @add-review="addReview"
+        ></reviews-form>
+      </div>
     </div>
   </div>
   <div v-else>
@@ -64,10 +77,19 @@ import { mapState } from "vuex";
 import ModalComponent from "@/components/ModalComponent.vue";
 import LogIn from "./LogIn.vue";
 import SignUp from "./SignUp.vue";
+import ReviewsForm from "@/components/ReviewsForm.vue";
+import StarComponent from "@/components/StarComponent.vue";
 
 export default {
-  components: { ButtonComponent, ModalComponent, LogIn, SignUp },
   props: ["id"],
+  components: {
+    ButtonComponent,
+    ModalComponent,
+    LogIn,
+    SignUp,
+    ReviewsForm,
+    StarComponent,
+  },
   data() {
     return {
       selectedIndex: 0,
@@ -77,6 +99,13 @@ export default {
   },
 
   methods: {
+    async addReview(payload) {
+      await this.$store.dispatch("createReview", {
+        ...payload,
+        productId: this.id,
+      });
+      this.$store.dispatch("fetchProducts");
+    },
     select(bool) {
       this.hasAccount = bool;
     },
@@ -84,7 +113,7 @@ export default {
       if (!this.userIsAuthenticated) return (this.showModal = true);
       const cart = [...this.$store.state.user.cart];
       cart.push({
-        id: Math.round(Math.random() * 10000).toString(),
+        id: Date.now(),
         productId: this.id,
         quantity: 1,
       });
@@ -133,6 +162,7 @@ export default {
 .ProductDetails h1 {
   font-size: 30px;
   margin-bottom: 10px;
+  padding: auto;
 }
 
 .product {
@@ -143,18 +173,20 @@ export default {
   padding: 100px;
 }
 
-.left {
-  padding: 50px;
+.right {
+  display: flex;
+  flex-direction: column;
+  padding: 15% 0px;
 }
-.right img {
-  width: 400px;
+.left img {
+  width: 100%;
   height: auto;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .ProductDetails p {
   color: gray;
-  font-size: 18px;
+  font-size: 15px;
   line-height: 1.5;
   margin-bottom: 20px;
 }
@@ -218,5 +250,17 @@ export default {
 .selector .active {
   background-color: rgb(255, 255, 255);
   color: black;
+}
+.reviews {
+  display: flex;
+  gap: 100px;
+}
+.title {
+  margin-bottom: 50px;
+}
+@media screen and (max-width: 800px) {
+  .reviews {
+    flex-direction: column;
+  }
 }
 </style>
