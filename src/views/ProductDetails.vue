@@ -48,7 +48,8 @@
         <h2 class="title">Customer Reviews</h2>
         <ul v-if="product.reviews?.length">
           <li v-for="review in product.reviews" :key="review.id">
-            by <strong>{{ review.author }}</strong> - {{ review.rating }} stars
+            by <strong>{{ review.author }}</strong>
+            <star-component :stars="parseInt(review.rating)" />
             <p>
               <i>{{ review.comment }}</i>
             </p>
